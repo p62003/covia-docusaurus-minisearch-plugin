@@ -85,13 +85,23 @@
     text-decoration: underline;
 }
 
-/* 高亮關鍵字 */
-.highlight {
-    background-color: var(--search-highlight-color, #ffeb3b);
-    color: #000;
-    padding: 0 2px;
-    border-radius: 2px;
-    font-weight: bold;
+/* 高亮關鍵字 - 終極修復版 */
+.highlight,
+:global(.search-highlight) {
+    background-color: var(--search-highlight-color, #ffeb3b) !important;
+    color: #000 !important;
+    padding: 0 2px !important;
+    border-radius: 2px !important;
+    font-weight: bold !important;
+    display: inline !important;
+}
+
+/* 確保 dangerouslySetInnerHTML 中的 HTML 標籤正確顯示 */
+.resultExcerpt span,
+.resultExcerpt mark,
+.resultTitle span,
+.resultTitle mark {
+    display: inline !important;
 }
 
 /* 搜尋建議 */
@@ -167,6 +177,27 @@
     box-shadow: 0 0 0 2px rgba(var(--ifm-color-primary-rgb), 0.25);
 }
 
+/* 節流狀態的搜尋框 */
+.throttled {
+    border-color: var(--ifm-color-warning, #f0ad4e);
+    background-color: rgba(240, 173, 78, 0.05);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(240, 173, 78, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 6px rgba(240, 173, 78, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(240, 173, 78, 0);
+    }
+}
+
 .searchButton {
     background: none;
     border: none;
@@ -190,6 +221,12 @@
 .searchButton:hover .searchIcon {
     opacity: 1;
     color: var(--ifm-color-primary);
+}
+
+/* 禁用狀態的搜尋按鈕 */
+.searchButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 
 /* 鍵盤快捷鍵提示 */

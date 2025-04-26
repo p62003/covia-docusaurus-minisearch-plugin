@@ -1,13 +1,37 @@
 # Covia Docusaurus MiniSearch Plugin
 
-Covia MiniSearch Plugin 是一個為 Docusaurus 小型至中型知識庫網站設計的輕量型本地搜尋解決方案。  
-它主打快速部署、簡單整合，特別適合不具備專業開發背景的使用者。  
-此插件完全於前端運行，無需額外的後端伺服器支持，適合個人、團隊與中小型專案使用。
+Covia MiniSearch Plugin is a lightweight local search solution designed for small to medium-sized knowledge base websites using Docusaurus.  
+It features quick deployment and simple integration, especially suitable for users without professional development backgrounds.  
+This plugin runs entirely on the frontend without requiring additional backend server support, making it ideal for individuals, teams, and small to medium-sized projects.
 
-> 📢 **注意**：本插件並不適用於超大型、多語系網站，或需要中文分詞優化的場景。
-> 若有進階需求，建議參考如 @easyops-cn/docusaurus-search-local 等其他解決方案。
+> 📢 **Important Notice**  
+> This plugin is designed for small to medium-sized, primarily English websites.  
+> It is **not suitable** for:
+> - Very large document repositories
+> - Multilingual websites
+> - Scenarios requiring **Chinese (Traditional or Simplified) word segmentation**  
+> 
+> ⚠️ Due to the limitations of MiniSearch tokenization, **this plugin cannot properly support Chinese search**. It is recommended for English or other space-separated languages.  
+> 
+> For advanced needs such as large-scale, multilingual, or Chinese-optimized search, please consider alternatives like `@easyops-cn/docusaurus-search-local`.
 
-## 檔案結構
+
+**🌟 Live Demo**
+- You can view a working demo of this plugin here:  
+- 🔗 [https://p62003.github.io/docusaurus-plugin-minisearch-COVIA-demo/docs/](https://p62003.github.io/docusaurus-plugin-minisearch-COVIA-demo/docs/)
+
+
+**🌟 Plugin Repository**
+- If you are looking for the source code of the plugin itself, please visit:  
+- 🔗 [covia-docusaurus-minisearch-plugin](https://github.com/p62003/covia-docusaurus-minisearch-plugin)
+
+
+**🌐 Available Languages:**
+- [English (Default)](README.md)
+- [繁體中文 (Traditional Chinese)](README_zh.md)
+
+
+## File Structure
 
 ```
 my-website/
@@ -25,48 +49,51 @@ my-website/
 │       └── LICENSE
 ```
 
-## 功能特點
+## Features
 
-* **即時搜尋**：提供高效、即時的前端搜尋體驗
-* **關鍵字高亮**：在搜尋結果中高亮顯示匹配的關鍵字
-* **模糊搜尋**：支援拼寫錯誤和近似匹配
-* **前綴搜尋**：支援輸入部分詞語進行匹配
-* **字段加權**：可對不同字段（如標題）設置不同的權重
-* **無縫整合**：完美融入 Docusaurus 主題，支援明暗模式切換
-* **完整布局**：搜尋結果頁面包含頁首和頁尾，保持網站一致性
-* **自動索引**：在建置時自動生成搜尋索引
+* **Real-time Search**: Provides efficient, real-time frontend search experience
+* **Keyword Highlighting**: Uses multi-level matching strategies, from exact matching to fuzzy matching
+* **Fuzzy Search**: Supports spelling errors and approximate matching (allowing 20% edit distance)
+* **Prefix Search**: Supports partial word matching
+* **Field Weighting**: Sets higher weight for titles (2x) to improve relevance
+* **Seamless Integration**: Perfectly integrates with Docusaurus themes, supporting light and dark mode switching
+* **Complete Layout**: Search results page includes header and footer, maintaining website consistency
+* **Automatic Indexing**: Automatically generates search index at build time and copies to multiple locations for enhanced compatibility
+* **Smart Search Delay**: Automatically enables throttling when search frequency exceeds 2 times within 3 seconds
+* **Multi-path Compatibility**: Automatically tries multiple possible index paths to ensure normal operation in different environments
+* **URL Smart Repair**: Automatically detects base path and fixes search result links
 
-## 安裝方式
+## Installation
 
-### 先決條件
+### Prerequisites
 
-* Docusaurus v3.0.0 或以上版本
-* Node.js v16.0.0 或以上版本
+* Docusaurus v3.0.0 or above
+* Node.js v16.0.0 or above
 
-### 步驟
+### Steps
 
-**1. 在你的 Docusaurus 項目中安裝必要依賴及插件目錄：**
+**1. Install necessary dependencies and create plugin directory in your Docusaurus project:**
 
-* 必須安裝的必要依賴：
+* Required dependencies:
 
-| 套件 | 說明 | 安裝指令 |
+| Package | Description | Installation Command |
 |---|----|-------|
-| minisearch | 前端全文搜尋引擎 | npm install minisearch |
-| globby | 檔案路徑抓取工具 | npm install globby |
-| gray-matter | 解析 .md / .mdx 前置 metadata | npm install gray-matter |
+| minisearch | Frontend full-text search engine | npm install minisearch |
+| globby | File path capture tool | npm install globby |
+| gray-matter | Parse .md / .mdx front matter metadata | npm install gray-matter |
 
 ```
 npm install minisearch globby gray-matter
 ```
-* 創建插件目錄：
+* Create plugin directory:
 ```bash
 mkdir -p plugins/docusaurus-plugin-minisearch
 ```
 
-**2. 複製插件檔案到該目錄：**
+**2. Copy plugin files to the directory:**
 
 ```bash
-# 複製以下檔案到插件目錄
+# Copy the following files to the plugin directory
 # - index.js
 # - indexGenerator.js
 # - SearchBar.js
@@ -74,153 +101,295 @@ mkdir -p plugins/docusaurus-plugin-minisearch
 # - styles.module.css
 ```
 
-**3. 在 `docusaurus.config.js` 中添加插件配置：**
+**3. Add plugin configuration in `docusaurus.config.js`:**
 
 ```js
-module.exports = {
-  // 其他配置...
+// docusaurus.config.js
+const config = {
+  // Other configurations...
   plugins: [
     [
       './plugins/docusaurus-plugin-minisearch',
       {
-        // 配置選項
-        highlightColor: '#ffeb3b',
-        searchResultPath: '/search-results',
-        searchFields: ['title', 'content'],
-        resultFields: ['title', 'url', 'excerpt'],
-        maxResults: 10
+        // Basic configuration (required)
+        indexPath: '/search-index.json',  // Search index file path
+        searchResultPath: '/search-results',  // Search results display page path
+        searchFields: ['title', 'content'],  // Fields to search
+        resultFields: ['title', 'url', 'excerpt'],  // Result fields to display
+        
+        // Optional configuration
+        maxResults: 10,  // Maximum number of results to display
+        highlightColor: '#ffeb3b',  // Search keyword highlight color
+        debounceTime: 3000  // Minimum interval for consecutive searches (milliseconds)
       }
     ],
   ],
 };
 ```
 
-## 配置選項
+## Configuration Options
 
-| 選項 | 類型 | 默認值 | 說明 |
-|------|------|--------|------|
-| highlightColor | String | '#ffeb3b' | 搜尋關鍵字高亮顏色 |
-| debounceTime | Number | 3000 | 連續搜尋的最小間隔時間(毫秒) |
-| searchResultPath | String | '/search-results' | 搜尋結果顯示頁面路徑 |
-| indexPath | String | '/search-index.json' | 搜尋索引檔案路徑 |
-| searchFields | Array | ['title', 'content'] | 要搜尋的欄位 |
-| resultFields | Array | ['title', 'url', 'excerpt'] | 要顯示的結果欄位 |
-| maxResults | Number | 10 | 最大顯示結果數量 |
+The table below lists all available configuration options, defined in `index.js`:
 
-## 技術實現
+| Option | Type | Default Value | Required | Description |
+|------|------|--------|--------|------|
+| indexPath | String | '/search-index.json' | Optional | Search index file path |
+| searchResultPath | String | '/search-results' | Optional | Search results display page path |
+| searchFields | Array | ['title', 'content'] | Optional | Fields to search |
+| resultFields | Array | ['title', 'url', 'excerpt'] | Optional | Result fields to display |
+| maxResults | Number | 10 | Optional | Maximum number of results to display |
+| highlightColor | String | '#ffeb3b' | Optional | Search keyword highlight color |
+| debounceTime | Number | 3000 | Optional | Minimum interval for consecutive searches (milliseconds) |
 
-### 插件架構
+## Technical Implementation
 
-插件由以下核心組件構成：
+### Plugin Architecture
 
-1. **索引生成器** - 從文檔檔案生成搜尋索引
-2. **搜尋框組件** - 整合到 Docusaurus 導航欄
-3. **搜尋結果頁面** - 顯示搜尋結果並高亮關鍵字
-4. **插件主文件** - 連接各組件並處理配置
+The plugin consists of the following core components:
 
-### 使用的關鍵技術
+1. **Index Generator (indexGenerator.js)** - Generates search index from document files
+2. **Search Bar Component (SearchBar.js)** - Integrates into Docusaurus navigation bar, implementing smart search delay functionality
+3. **Search Results Page (SearchResults.js)** - Displays search results, implements multi-level highlighting and URL repair
+4. **Plugin Main File (index.js)** - Connects components, handles configuration, injects global styles
+5. **Style File (styles.module.css)** - Defines styles for search bar, search results, highlighted keywords, etc.
 
-* **MiniSearch** - 輕量級但功能強大的前端全文搜尋引擎
-* **Docusaurus Theme API** - 集成到 Docusaurus 主題系統
-* **React Hooks** - 管理搜尋狀態和索引載入
-* **Docusaurus Plugin API** - 註冊路由和共享配置數據
+### Key Technologies Used
 
-### 工作原理
+* **MiniSearch** - Lightweight but powerful frontend full-text search engine
+* **Docusaurus Theme API** - Integration with Docusaurus theme system
+* **React Hooks** - Manage search state and index loading
+* **Docusaurus Plugin API** - Register routes and share configuration data
+* **CSS Modules** - Component style isolation, avoiding style conflicts
 
-1. **索引生成**
-   * 在建置時遍歷所有文檔檔案
-   * 提取標題、內容、URL 等信息
-   * 生成 JSON 索引檔案存放在 `static` 目錄
+### How It Works
+
+1. **Index Generation**
+   * Traverses all document files during build time
+   * Extracts title, content, URL and other information
+   * Generates JSON index file stored in the `static` directory
+   * Index file is copied to multiple locations for enhanced compatibility
    
-2. **搜尋流程**
-   * 用戶在導航欄搜尋框輸入關鍵字
-   * 點擊搜尋按鈕後導航至搜尋結果頁面
-   * 搜尋結果頁面載入索引檔案
-   * 使用 MiniSearch 在瀏覽器中進行搜尋
-   * 渲染搜尋結果並高亮關鍵字
+2. **Search Process**
+   * User enters keywords in the navigation bar search box
+   * Smart delay function detects search frequency, preventing frequent searches in a short time
+   * After clicking the search button, navigates to the search results page
+   * Search results page attempts to load the index file from multiple possible paths
+   * Uses MiniSearch to perform searches in the browser, supporting prefix matching, fuzzy matching, and field weighting
+   * Renders search results and highlights keywords using multi-level matching strategy
 
-## 自定義
+3. **Highlighting Implementation**
+   * Uses multi-level matching strategy, trying in priority order:
+     1. Original query term matching (e.g., when searching for "READ")
+     2. Complete word matching (each word after tokenization)
+     3. Containing matching (words containing search terms)
+     4. Partial word matching (substrings of words with length >=3)
+   * Uses a combination of CSS and inline styles to ensure highlight effects display correctly in various environments
 
-### 自定義搜尋結果樣式
+4. **URL Repair Mechanism**
+   * Automatically detects the base path of the current environment using multiple methods:
+     1. Get from Docusaurus meta tags
+     2. Check current URL path
+     3. Check if in local development environment
+     4. Get from search results page URL
+     5. Infer from document links
+   * Ensures search result links work correctly in different deployment environments
 
-修改 `styles.module.css` 檔案可自定義搜尋結果的外觀：
+## Customization
+
+### Customizing Search Result Styles
+
+Modify the `styles.module.css` file to customize the appearance of search results:
 
 ```css
-/* 修改搜尋結果項目樣式 */
+/* Modify search result item styles */
 .resultItem {
-  /* 自定義樣式 */
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+  border-radius: 8px;
+  background-color: var(--ifm-card-background-color);
+  box-shadow: var(--ifm-global-shadow-lw);
+  transition: all 0.2s ease;
+  border-left: 4px solid var(--ifm-color-primary);
 }
 
-/* 修改高亮關鍵字樣式 */
-.highlight {
-  /* 自定義樣式 */
+/* Modify highlighted keyword styles */
+.highlight,
+:global(.search-highlight) {
+  background-color: var(--search-highlight-color, #ffeb3b) !important;
+  color: #000 !important;
+  padding: 0 2px !important;
+  border-radius: 2px !important;
+  font-weight: bold !important;
+  display: inline !important;
+}
+
+/* Throttled state search box */
+.throttled {
+  border-color: var(--ifm-color-warning, #f0ad4e);
+  background-color: rgba(240, 173, 78, 0.05);
+  animation: pulse 1.5s infinite;
 }
 ```
 
-### 自定義搜尋選項
+### Customizing Search Options
 
-在 `SearchResults.js` 中修改搜尋選項：
+Modify search options in `SearchResults.js`:
 
 ```javascript
 const hits = miniSearch.search(query, { 
-  prefix: true,      // 前綴搜尋
-  boost: { title: 2 }, // 標題權重為 2
-  fuzzy: 0.2         // 模糊搜尋，容許 20% 的編輯距離
+  prefix: true,      // Prefix search
+  boost: { title: 2 }, // Title weight is 2
+  fuzzy: 0.2         // Fuzzy search, allowing 20% edit distance
 });
 ```
 
-## 常見問題
+## Frequently Asked Questions
 
-**Q: 搜尋索引會增加網站大小嗎？**  
-A: 會，但幅度有限。對於中小型文檔網站，索引通常在幾百KB範圍內。
+**Q: Will the search index increase the website size?**  
+A: Yes, but to a limited extent. For small to medium-sized documentation websites, the index is typically in the range of a few hundred KB.
 
-**Q: 如何更新搜尋索引？**  
-A: 每次重新建置網站時會自動更新索引。
+**Q: How to update the search index?**  
+A: The index is automatically updated each time the website is rebuilt.
 
-**Q: 搜尋結果是否支援多語言？**  
-A: 基本支援，但可能需要針對不同語言調整分詞設定。
+**Q: Do search results support multiple languages?**  
+A: Basic support is provided, but word segmentation settings may need to be adjusted for different languages.
 
-**Q: 為什麼搜尋結果頁面顯示「頁面未找到」？**  
-A: 這通常是由於路由衝突導致。確保 `searchResultPath` 設置為一個不與其他路由衝突的值。
+**Q: Why does the search results page show "Page Not Found"?**  
+A: This is usually caused by route conflicts. Make sure `searchResultPath` is set to a value that doesn't conflict with other routes.
 
-## 技術限制
+**Q: Why does the search function still work after modifying indexPath?**  
+A: The plugin has designed multiple backup mechanisms and will try multiple possible index paths to ensure functionality even if the configuration changes.
 
-* 純前端搜尋，不適用於極大型文檔庫
-* 搜尋索引需要在建置時生成，無法包含動態內容
-* 目前沒有內置的搜尋建議功能
+**Q: Why are multiple searches in a short time restricted?**  
+A: The plugin implements smart search delay functionality. When the number of searches exceeds 2 times within 3 seconds, the throttling mechanism is activated to prevent excessive requests.
 
-## 貢獻指南
+## Technical Limitations
 
-歡迎提交 Issues 和 Pull Requests。在提交前，請確保：
+* Pure frontend search, not suitable for extremely large document repositories
+* Search index needs to be generated at build time, cannot include dynamic content
+* Currently no built-in search suggestion functionality
+* No specialized word segmentation optimization for Chinese and other Asian languages
 
-1. 代碼符合專案的編碼風格
-2. 所有測試均已通過
-3. 新功能或修改已添加適當的文檔
+## Documentation Updates and Index Maintenance
 
-## 實作細節與注意事項
+### Updating Search Index After Adding New Documents
 
-### MiniSearch 使用注意事項
+When you add or modify documents, the search index needs to be updated to reflect the new content. There are several ways to do this:
 
-使用 `MiniSearch.loadJSON` 時需直接傳入 JSON 字符串而非解析後的對象：
+#### Method 1: Complete Site Rebuild
+
+The most direct method is to rebuild the entire website:
+
+```bash
+npm run build
+# Then redeploy the website
+```
+#### Method 2: Update Index File Separately (Suitable for VPS/Server Deployment)
+
+If you only added or modified document content and don't want to rebuild the entire website, you can:
+
+1. Generate a new index file in the local environment:
+   ```bash
+   npm start
+   ```
+
+2. Wait for the index generation to complete (you'll usually see a message like `✅ search-index.json has been copied to [path] successfully` in the console)
+
+3. Upload the following files to your server:
+   - The newly added document files
+   - The new index file located at `static/search-index.json`
+
+4. Make sure the index file is uploaded to the correct location, typically:
+   - `/path-to-your-website/search-index.json`
+   - And other paths that the plugin might try
+
+This method is particularly suitable for situations where documentation is frequently updated but the website structure remains stable, saving deployment time and reducing resource consumption.
+
+### Path and Deployment Considerations
+
+In different environments (local development, GitHub Pages, self-hosted VPS, etc.), the website's base path may be different:
+
+- Local development: usually `http://localhost:3000/`
+- GitHub Pages: usually `https://username.github.io/repo-name/`
+- Self-hosted: could be `https://your-domain.com/` or `https://your-domain.com/docs/`
+
+The plugin will attempt to automatically detect the base path of the current environment and try multiple possible index paths, but if problems occur (e.g., incorrect search result links), you can explicitly set `baseUrl` in `docusaurus.config.js`:
 
 ```javascript
-// 錯誤方式
+module.exports = {
+  // ...
+  baseUrl: '/your-base-path/',  // e.g., '/docs/' or '/'
+  // ...
+};
+```
+
+## Implementation Details and Notes
+
+### Multi-path Attempt Mechanism
+
+The plugin will attempt to load the index file from multiple possible paths:
+
+```javascript
+const possiblePaths = [
+    // Original path
+    indexPath,
+    // Relative path
+    './search-index.json',
+    // Absolute path
+    '/search-index.json',
+    // Path based on current site
+    window.location.pathname.split('/search-results')[0] + '/search-index.json'
+];
+```
+
+This design ensures that the search function works normally even if the configuration changes.
+
+### Smart Search Delay Functionality
+
+The plugin implements smart search delay functionality, activating delay only when searches are frequent in a short period:
+
+```javascript
+// Check if throttling is needed
+const checkThrottle = () => {
+    const now = Date.now();
+    const history = searchHistoryRef.current;
+    
+    // Add current search time to history
+    history.push(now);
+    
+    // Only keep records within the last 3 seconds
+    const recentHistory = history.filter(time => now - time < debounceTime);
+    searchHistoryRef.current = recentHistory;
+    
+    // Enable throttling if search count exceeds 2 times within 3 seconds
+    const needThrottle = recentHistory.length > 2;
+    
+    // ...
+};
+```
+
+### MiniSearch Usage Notes
+
+When using `MiniSearch.loadJSON`, you need to pass the JSON string directly rather than the parsed object:
+
+```javascript
+// Incorrect method
 const rawIndex = JSON.parse(text);
 const miniSearch = MiniSearch.loadJSON(rawIndex, options);
 
-// 正確方式
+// Correct method
 const miniSearch = MiniSearch.loadJSON(text, options);
 ```
 
-### 路由設置注意事項
+### Route Setting Notes
 
-避免搜尋結果路徑與 Docusaurus 默認路徑衝突：
+Avoid conflicts between the search results path and Docusaurus default paths:
 
 ```javascript
-// 推薦使用專用路徑
+// Recommend using a dedicated path
 searchResultPath = '/search-results'
 
-// 確保精確匹配
+// Ensure exact matching
 addRoute({
   path: searchResultPath,
   component: '@theme/SearchResults',
@@ -228,10 +397,6 @@ addRoute({
 });
 ```
 
-## 授權協議
+## License
 
-本專案使用 MIT 授權協議。
-
-## 文檔類型
-
-README.md
+This project is licensed under the MIT License.

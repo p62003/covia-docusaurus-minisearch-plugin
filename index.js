@@ -38,7 +38,20 @@ function pluginMiniSearch(context, options) {
                 outputPath: indexOutputPath,
             });
 
-            // 拷貝到 static 目錄
+            // 拷貝到 static 目錄,拷貝到多個位置，增加兼容性
+            const staticPaths = [
+                path.join(siteDir, 'static', 'search-index.json'),
+                path.join(siteDir, 'static', indexPath.replace(/^\//, '')),
+                // 確保也有不帶前置斜線的版本
+                path.join(siteDir, 'build', 'search-index.json')
+            ];
+
+            staticPaths.forEach(staticPath => {
+                fs.mkdirSync(path.dirname(staticPath), { recursive: true });
+                fs.copyFileSync(indexOutputPath, staticPath);
+                console.log(`✅ search-index.json 已複製到 ${staticPath} 成功`);
+            });
+
             const staticPath = path.join(siteDir, 'static', 'search-index.json');
             fs.mkdirSync(path.dirname(staticPath), { recursive: true });
             fs.copyFileSync(indexOutputPath, staticPath);
@@ -90,7 +103,7 @@ function pluginMiniSearch(context, options) {
             };
         },
 
-        // 在客戶端注入變量
+        // 在客戶端注入變量和全局樣式
         injectHtmlTags() {
             return {
                 headTags: [
@@ -99,6 +112,24 @@ function pluginMiniSearch(context, options) {
                         innerHTML: `
                             :root {
                                 --search-highlight-color: ${highlightColor};
+                            }
+                            
+                            /* 全局高亮樣式，確保最高優先級 */
+                            .search-highlight,
+                            span[style*="background-color:${highlightColor}"],
+                            mark[style*="background-color:${highlightColor}"] {
+                                background-color: ${highlightColor} !important;
+                                color: #000 !important;
+                                padding: 0 2px !important;
+                                border-radius: 2px !important;
+                                font-weight: bold !important;
+                                display: inline !important;
+                            }
+                            
+                            /* 確保 dangerouslySetInnerHTML 中的 HTML 標籤正確顯示 */
+                            .resultExcerpt span,
+                            .resultExcerpt mark {
+                                display: inline !important;
                             }
                         `,
                     },
