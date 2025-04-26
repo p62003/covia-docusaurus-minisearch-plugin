@@ -39,6 +39,14 @@ export default function SearchResults() {
         });
         return result;
     };
+    // 添加一個輔助函數來修復 URL
+    const fixDocUrl = (url) => {
+        // 處理 README.md 特殊情況
+        if (url.endsWith('/README')) {
+            return url.substring(0, url.length - '/README'.length) || '/docs';
+        }
+        return url;
+    };
 
     useEffect(() => {
         async function searchDocs() {
@@ -151,7 +159,7 @@ export default function SearchResults() {
                 <ul className={styles.resultList}>
                     {results.map((item, idx) => (
                         <li key={idx} className={styles.resultItem}>
-                            <a href={item.url} className={styles.resultTitle}>
+                            <a href={fixDocUrl(item.url)} className={styles.resultTitle}>
                                 {item.title}
                             </a>
                             {item.excerpt && (
@@ -162,7 +170,7 @@ export default function SearchResults() {
                                     }}
                                 />
                             )}
-                            <a href={item.url} className={styles.resultLink}>
+                            <a href={fixDocUrl(item.url)} className={styles.resultLink}>
                                 查看文檔 →
                             </a>
                         </li>

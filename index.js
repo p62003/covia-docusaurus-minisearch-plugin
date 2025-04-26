@@ -44,12 +44,6 @@ function pluginMiniSearch(context, options) {
             fs.copyFileSync(indexOutputPath, staticPath);
             console.log(`✅ search-index.json 已複製到 ${staticPath} 成功`);
 
-            // 仍然同時複製到 public 目錄作為備份
-            const publicPath = path.join(siteDir, 'public', 'search-index.json');
-            fs.mkdirSync(path.dirname(publicPath), { recursive: true });
-            fs.copyFileSync(indexOutputPath, publicPath);
-            console.log(`✅ search-index.json 也已複製到 ${publicPath} 成功`);
-
             // 返回搜尋配置信息
             return {
                 searchConfig: {

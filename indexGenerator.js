@@ -29,7 +29,7 @@ async function generateSearchIndex({ docsPath, searchResultPath, searchFields, r
 
             // 生成一致的 URL 路徑（使用正規化的 POSIX 風格路徑）
             const normalizedPath = filePath.split(path.sep).join('/');
-            const url = `${searchResultPath}/${normalizedPath.replace(/\.mdx?$/, '')}`;
+            const url = `/docs/${normalizedPath.replace(/\.mdx?$/, '')}`;
 
             // 提取摘要（前 150 個字元）
             const plainText = content.replace(/\s+/g, ' ').trim();

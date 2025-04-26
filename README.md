@@ -45,13 +45,25 @@ my-website/
 
 ### 步驟
 
-1. 在你的 Docusaurus 項目中創建插件目錄：
+**1. 在你的 Docusaurus 項目中安裝必要依賴及插件目錄：**
 
+* 必須安裝的必要依賴：
+
+| 套件 | 說明 | 安裝指令 |
+|---|----|-------|
+| minisearch | 前端全文搜尋引擎 | npm install minisearch |
+| globby | 檔案路徑抓取工具 | npm install globby |
+| gray-matter | 解析 .md / .mdx 前置 metadata | npm install gray-matter |
+
+```
+npm install minisearch globby gray-matter
+```
+* 創建插件目錄：
 ```bash
 mkdir -p plugins/docusaurus-plugin-minisearch
 ```
 
-2. 複製插件檔案到該目錄：
+**2. 複製插件檔案到該目錄：**
 
 ```bash
 # 複製以下檔案到插件目錄
@@ -62,7 +74,7 @@ mkdir -p plugins/docusaurus-plugin-minisearch
 # - styles.module.css
 ```
 
-3. 在 `docusaurus.config.js` 中添加插件配置：
+**3. 在 `docusaurus.config.js` 中添加插件配置：**
 
 ```js
 module.exports = {
@@ -219,3 +231,7 @@ addRoute({
 ## 授權協議
 
 本專案使用 MIT 授權協議。
+
+## 文檔類型
+
+README.md
