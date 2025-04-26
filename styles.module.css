@@ -1,0 +1,236 @@
+/**
+ * Docusaurus MiniSearch 插件樣式
+ * 兼容深色/淺色主題
+ */
+
+/* 搜尋結果頁面樣式 */
+.searchResults {
+    padding: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.searchResults h2 {
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+    color: var(--ifm-heading-color);
+}
+
+.resultCount {
+    color: var(--ifm-color-emphasis-600);
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+}
+
+.resultList {
+    list-style: none;
+    padding: 0;
+}
+
+.resultItem {
+    margin-bottom: 1.5rem;
+    padding: 1.25rem;
+    border-radius: 8px;
+    background-color: var(--ifm-card-background-color);
+    box-shadow: var(--ifm-global-shadow-lw);
+    transition: all 0.2s ease;
+    border-left: 4px solid var(--ifm-color-primary);
+}
+
+.resultItem:hover {
+    box-shadow: var(--ifm-global-shadow-md);
+    transform: translateY(-2px);
+}
+
+.resultTitle {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--ifm-link-color);
+    text-decoration: none;
+}
+
+.resultTitle:hover {
+    text-decoration: underline;
+}
+
+.resultExcerpt {
+    margin: 0.5rem 0 1rem;
+    color: var(--ifm-font-color-base);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.resultLink {
+    display: inline-block;
+    color: var(--ifm-color-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.resultLink:hover {
+    text-decoration: underline;
+}
+
+/* 高亮關鍵字 */
+.highlight {
+    background-color: var(--search-highlight-color, #ffeb3b);
+    color: #000;
+    padding: 0 2px;
+    border-radius: 2px;
+    font-weight: bold;
+}
+
+/* 搜尋建議 */
+.suggestions {
+    margin-top: 1.5rem;
+    padding-left: 1.5rem;
+    color: var(--ifm-color-emphasis-700);
+}
+
+.suggestions li {
+    margin-bottom: 0.5rem;
+}
+
+/* 錯誤訊息 */
+.error {
+    color: #e53e3e;
+    background-color: rgba(229, 62, 62, 0.1);
+    padding: 1rem;
+    border-radius: 5px;
+    margin: 1rem 0;
+    border-left: 4px solid #e53e3e;
+}
+
+/* 加載動畫 */
+.loader {
+    margin: 2rem auto;
+    border: 4px solid var(--ifm-color-emphasis-200);
+    border-top: 4px solid var(--ifm-color-primary);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* 搜尋框樣式 */
+.searchForm {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin-right: 1rem;
+    transition: all 0.3s ease;
+}
+
+.searchFormFocused {
+    transform: translateY(2px);
+}
+
+.searchInput {
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid var(--ifm-color-emphasis-300);
+    background-color: var(--ifm-background-color);
+    color: var(--ifm-font-color-base);
+    width: 180px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.searchInput:focus {
+    outline: none;
+    border-color: var(--ifm-color-primary);
+    width: 220px;
+    box-shadow: 0 0 0 2px rgba(var(--ifm-color-primary-rgb), 0.25);
+}
+
+.searchButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    right: 8px;
+    padding: 0;
+    color: var(--ifm-navbar-link-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.searchIcon {
+    width: 18px;
+    height: 18px;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.searchButton:hover .searchIcon {
+    opacity: 1;
+    color: var(--ifm-color-primary);
+}
+
+/* 鍵盤快捷鍵提示 */
+.searchShortcut {
+    position: absolute;
+    bottom: -25px;
+    right: 0;
+    font-size: 0.75rem;
+    color: var(--ifm-color-emphasis-600);
+    background-color: var(--ifm-background-surface-color);
+    padding: 2px 8px;
+    border-radius: 4px;
+    box-shadow: var(--ifm-global-shadow-lw);
+    z-index: 10;
+}
+
+.kbdKey {
+    background-color: var(--ifm-color-emphasis-200);
+    border: 1px solid var(--ifm-color-emphasis-300);
+    border-radius: 3px;
+    box-shadow: 0 1px 0 var(--ifm-color-emphasis-400);
+    color: var(--ifm-color-emphasis-800);
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1;
+    padding: 2px 5px;
+    margin: 0 2px;
+}
+
+/* 響應式樣式 */
+@media (max-width: 768px) {
+    .searchResults {
+        padding: 1rem;
+    }
+
+    .searchInput {
+        width: 150px;
+    }
+
+    .searchInput:focus {
+        width: 180px;
+    }
+}
