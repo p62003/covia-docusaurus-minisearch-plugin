@@ -152,7 +152,41 @@
     align-items: center;
     position: relative;
     margin-right: 1rem;
+    margin-left: 1rem;
+    /* 使搜索欄靠左一些 */
     transition: all 0.3s ease;
+}
+
+/* 搜尋框展開狀態 - 固定在畫面中央 */
+.searchFormExpanded {
+    position: fixed;
+    /* 固定定位，相對於視窗 */
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    /* 居中顯示 */
+    z-index: 1000;
+    /* 提高z-index確保在最上層 */
+    background-color: var(--ifm-navbar-background-color);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-width: 90%;
+    /* 確保不超過視窗寬度的90% */
+    width: 500px;
+    /* 預設寬度，在小屏幕上會被max-width限制 */
+    box-sizing: border-box;
+    /* 確保padding不會增加元素寬度 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 確保在展開狀態下，搜尋按鈕的位置也是正確的 */
+.searchFormExpanded .searchButton {
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .searchFormFocused {
@@ -175,6 +209,17 @@
     border-color: var(--ifm-color-primary);
     width: 220px;
     box-shadow: 0 0 0 2px rgba(var(--ifm-color-primary-rgb), 0.25);
+}
+
+/* 展開狀態下的搜索輸入框 */
+.searchFormExpanded .searchInput {
+    width: 100%;
+    max-width: 100%;
+}
+
+.searchFormExpanded .searchInput:focus {
+    width: 100%;
+    max-width: 100%;
 }
 
 /* 節流狀態的搜尋框 */
@@ -204,11 +249,18 @@
     cursor: pointer;
     position: absolute;
     right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
     padding: 0;
     color: var(--ifm-navbar-link-color);
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* 展開狀態下的搜索按鈕 */
+.searchFormExpanded .searchButton {
+    right: 8px;
 }
 
 .searchIcon {
@@ -229,32 +281,50 @@
     opacity: 0.7;
 }
 
-/* 鍵盤快捷鍵提示 */
-.searchShortcut {
+/* 節流消息提示 */
+.throttleMessage {
     position: absolute;
-    bottom: -25px;
+    top: 100%;
     right: 0;
     font-size: 0.75rem;
-    color: var(--ifm-color-emphasis-600);
+    color: var(--ifm-color-warning);
     background-color: var(--ifm-background-surface-color);
     padding: 2px 8px;
     border-radius: 4px;
     box-shadow: var(--ifm-global-shadow-lw);
     z-index: 10;
+    margin-top: 5px;
 }
 
-.kbdKey {
-    background-color: var(--ifm-color-emphasis-200);
-    border: 1px solid var(--ifm-color-emphasis-300);
-    border-radius: 3px;
-    box-shadow: 0 1px 0 var(--ifm-color-emphasis-400);
-    color: var(--ifm-color-emphasis-800);
-    display: inline-block;
-    font-size: 0.7rem;
-    font-weight: 700;
-    line-height: 1;
-    padding: 2px 5px;
-    margin: 0 2px;
+/* 移動端搜尋按鈕 */
+.mobileSearchButton {
+    display: none;
+    /* 默認在電腦版隱藏 */
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--ifm-navbar-link-color);
+    padding: 0.5rem;
+    margin-right: 0.5rem;
+}
+
+/* 在展開狀態下隱藏移動端搜尋按鈕 */
+.searchFormExpanded .mobileSearchButton {
+    display: none;
+}
+
+/* 搜尋輸入框包裝器 */
+.searchInputWrapper {
+    display: flex;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+/* 搜尋輸入框包裝器展開狀態 */
+.searchInputWrapperExpanded {
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 /* 響應式樣式 */
@@ -269,5 +339,156 @@
 
     .searchInput:focus {
         width: 180px;
+    }
+
+    /* 在移動端顯示搜尋按鈕，隱藏搜尋框 */
+    .mobileSearchButton {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .searchInputWrapper {
+        display: none;
+    }
+
+    .searchFormExpanded .searchInputWrapper {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* 確保在移動端展開狀態下，搜尋按鈕的位置也是正確的 */
+    .searchFormExpanded .searchButton {
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    /* 調整搜索框在展開狀態下的樣式 - 保持居中 */
+    .searchFormExpanded {
+        width: 90%;
+        max-width: 400px;
+        padding: 0.75rem;
+    }
+}
+
+/* 針對小型手機的特殊處理 */
+@media (max-width: 480px) {
+    .searchInput {
+        width: 100%;
+        max-width: calc(100vw - 80px);
+        box-sizing: border-box;
+    }
+
+    .searchInput:focus {
+        width: 100%;
+        max-width: calc(100vw - 80px);
+    }
+
+    /* 在小屏幕上，展開時的搜尋框樣式 - 保持居中 */
+    .searchFormExpanded {
+        width: 90%;
+        max-width: 350px;
+        overflow: hidden;
+        /* 防止內容溢出 */
+    }
+
+    .searchInputWrapperExpanded {
+        width: 100%;
+    }
+
+    /* 確保搜尋按鈕在小屏幕上位置正確 */
+    .searchFormExpanded .searchButton {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    /* 確保節流消息提示正確顯示 */
+    .throttleMessage {
+        right: auto;
+        left: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+/* 針對超小型手機的特殊處理（如iPhone 12 mini等） */
+@media (max-width: 375px) {
+    .searchFormExpanded {
+        padding: 0.5rem;
+        width: 90%;
+        max-width: 300px;
+    }
+
+    .searchInput {
+        width: 100%;
+        max-width: calc(100vw - 70px);
+        padding: 0.4rem 1.75rem 0.4rem 0.5rem;
+        box-sizing: border-box;
+    }
+
+    .searchInput:focus {
+        width: 100%;
+        max-width: calc(100vw - 70px);
+    }
+
+    .searchInputWrapperExpanded {
+        width: 100%;
+    }
+
+    /* 確保搜索按鈕位置正確 */
+    .searchFormExpanded .searchButton {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+
+/* 針對iPhone (390x844)的特殊處理 */
+@media (min-width: 376px) and (max-width: 400px) {
+    .searchFormExpanded {
+        padding: 0.5rem;
+        width: 90%;
+        max-width: 320px;
+    }
+
+    .searchInputWrapperExpanded {
+        width: 100%;
+    }
+
+    .searchInput {
+        width: 100%;
+        max-width: calc(100vw - 80px);
+        box-sizing: border-box;
+    }
+
+    .searchInput:focus {
+        width: 100%;
+        max-width: calc(100vw - 80px);
+    }
+
+    /* 確保節流消息提示正確顯示 */
+    .throttleMessage {
+        right: auto;
+        left: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* 確保搜索按鈕位置正確 */
+    .searchFormExpanded .searchButton {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    /* 確保移動端搜索按鈕位置正確 */
+    .searchFormExpanded .mobileSearchButton {
+        margin-right: 0;
     }
 }

@@ -52,16 +52,19 @@ my-website/
 ## Features
 
 * **Real-time Search**: Provides efficient, real-time frontend search experience
-* **Keyword Highlighting**: Uses multi-level matching strategies, from exact matching to fuzzy matching
+* **Keyword Highlighting**: Uses multi-level matching strategies, from exact matching to fuzzy matching, solving the always-highlighted title issue
 * **Fuzzy Search**: Supports spelling errors and approximate matching (allowing 20% edit distance)
 * **Prefix Search**: Supports partial word matching
 * **Field Weighting**: Sets higher weight for titles (2x) to improve relevance
 * **Seamless Integration**: Perfectly integrates with Docusaurus themes, supporting light and dark mode switching
 * **Complete Layout**: Search results page includes header and footer, maintaining website consistency
 * **Automatic Indexing**: Automatically generates search index at build time and copies to multiple locations for enhanced compatibility
-* **Smart Search Delay**: Automatically enables throttling when search frequency exceeds 2 times within 3 seconds
+* **Smart Search Delay**: Automatically enables throttling when search frequency exceeds 2 times within 3 seconds, with user-friendly visual feedback
 * **Multi-path Compatibility**: Automatically tries multiple possible index paths to ensure normal operation in different environments
 * **URL Smart Repair**: Automatically detects base path and fixes search result links
+* **Responsive Design**: Optimizes search box display for different screen sizes, with special enhancements for mobile experience
+* **Professional Icons**: Uses SVG icons instead of emojis to enhance overall visual quality
+* **Centered Search Box**: Fixes the search box in the center of the screen on small phones to avoid display issues
 
 ## Installation
 
@@ -184,6 +187,8 @@ The plugin consists of the following core components:
      3. Containing matching (words containing search terms)
      4. Partial word matching (substrings of words with length >=3)
    * Uses a combination of CSS and inline styles to ensure highlight effects display correctly in various environments
+   * Solves the always-highlighted title issue, highlighting titles only when they actually contain search terms
+   * Optimizes highlighting for partial word matches (e.g., when searching for "READ")
 
 4. **URL Repair Mechanism**
    * Automatically detects the base path of the current environment using multiple methods:
@@ -193,6 +198,28 @@ The plugin consists of the following core components:
      4. Get from search results page URL
      5. Infer from document links
    * Ensures search result links work correctly in different deployment environments
+   * Handles special cases such as README.md file path repair
+
+5. **Mobile Optimization**
+   * **Search Box Position Adjustment**:
+     - On mobile devices, hides the search box by default and only shows the magnifying glass icon
+     - Expands to show the search box only when the icon is clicked, avoiding conflicts with the left-side title
+   * **Responsive Width Design**:
+     - Sets different search box widths for different screen sizes
+     - Reduces the default width of the search box on small screens
+   * **Centered Search Box Display**:
+     - On small phones, changes the search box from fixed at the top to fixed in the center of the screen
+     - Uses `position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);` for perfect centering
+     - Sets appropriate `z-index` to ensure the search box is on top
+   * **Internal Layout Optimization**:
+     - Adjusts the position relationship between input box and buttons
+     - Ensures the input box occupies appropriate space in expanded state
+     - Unifies button positioning methods
+
+6. **Icon Optimization**
+   * Replaces emojis (🕒, ⏱️, 🔍) in search buttons with professional SVG icons
+   * Uses inline SVG rather than external resources to ensure icons are always available
+   * Solves the problem of duplicate magnifying glass icons appearing at low resolutions
 
 ## Customization
 
@@ -364,8 +391,45 @@ const checkThrottle = () => {
     // Enable throttling if search count exceeds 2 times within 3 seconds
     const needThrottle = recentHistory.length > 2;
     
-    // ...
+    if (needThrottle && !isThrottled) {
+        setIsThrottled(true);
+        
+        // Set timer to disable throttling after delay time
+        if (timerRef.current) {
+            clearTimeout(timerRef.current);
+        }
+        
+        timerRef.current = setTimeout(() => {
+            setIsThrottled(false);
+        }, debounceTime);
+        
+        return true;
+    }
+    
+    return false;
 };
+```
+
+It also provides user-friendly visual feedback:
+
+```jsx
+<input
+    className={`${styles.searchInput} ${isThrottled ? styles.throttled : ''}`}
+    // ...other properties
+/>
+<button
+    disabled={isThrottled}
+    // ...other properties
+>
+    {isThrottled ? <TimerIcon /> : <SearchIcon />}
+</button>
+
+{/* Throttle message */}
+{isThrottled && (
+    <div className={styles.throttleMessage}>
+        Search frequency too high, please try again later
+    </div>
+)}
 ```
 
 ### MiniSearch Usage Notes
