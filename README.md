@@ -18,7 +18,7 @@ This plugin runs entirely on the frontend without requiring additional backend s
 
 **🌟 Live Demo**
 - You can view a working demo of this plugin here:  
-- 🔗 [https://p62003.github.io/docusaurus-plugin-minisearch-COVIA-demo/docs/](https://p62003.github.io/docusaurus-plugin-minisearch-COVIA-demo/docs/)
+- 🔗 [https://p62003.github.io/docusaurus-plugin-minisearch-COVIA-demo/docs/](https://p62003.github.io/docusaurus-plugin-minisearch-COVIA-demo/)
 
 
 **🌟 Plugin Repository**
